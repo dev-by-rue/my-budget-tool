@@ -6,7 +6,7 @@
 
 **Architecture:** Pure calc engine → `BudgetRepository` interface with Browser and Postgres adapters (boot probe + fallback) → Pinia store → three Ionic tabs. Capacitor wired from day one; develop in-browser first.
 
-**Tech Stack:** Ionic 8 + Vue 3 + TypeScript, Vue Router, Pinia, Vitest, Capacitor 6+, local Express + `pg` for Postgres adapter, IndexedDB via `idb` (with Preferences fallback path documented in browser adapter).
+**Tech Stack:** Ionic 8 + Vue 3 + TypeScript (via `@ionic/cli` `ionic start … tabs --type vue`), Vue Router, Pinia, Vitest, Capacitor, local Express + `pg` for Postgres adapter, IndexedDB via `idb` (with Preferences fallback path documented in browser adapter).
 
 **Spec:** `docs/superpowers/specs/2026-09-18-budget-app-phase1-design.md`
 
@@ -86,27 +86,71 @@ budget-application/
 ### Task 1: Scaffold Ionic Vue + Capacitor + Vitest
 
 **Files:**
-- Create: project root via Ionic CLI (all default Ionic Vue files)
+- Create: project root via Ionic CLI (tabs starter — matches Budget/Goals/History)
 - Create: `vitest.config.ts`
 - Modify: `package.json` (test scripts)
-- Test: `src/domain/calc/smoke.test.ts` (temporary, deleted in Task 3)
+- Keep: `docs/`, `project_scope.md`, `budget-pot-calculator.html`
 
 **Interfaces:**
 - Consumes: none
-- Produces: runnable `npm run dev`, `npm test`, Capacitor config present
+- Produces: runnable `ionic serve` / `npm run dev`, `npm test`, Capacitor ready (platforms added when needed)
 
-- [ ] **Step 1: Scaffold the app in the repo root**
+**Official docs (source of truth):**
+- Quickstart: https://ionicframework.com/docs/vue/quickstart — `npm install -g @ionic/cli` then `ionic start … --type vue`
+- First app (tabs): https://ionicframework.com/docs/vue/your-first-app — `ionic start … tabs --type vue`
+- Capacitor: `ionic build` then `ionic cap add ios` / `android` (native folders later; wire Capacitor into the project at scaffold time)
 
-From `/Users/ruebencumberbatch/code/budget-application`, keep existing `docs/`, `project_scope.md`, and `budget-pot-calculator.html`. Scaffold into a temp dir then merge, **or** generate in place without overwriting docs:
+- [ ] **Step 1: Install Ionic CLI (if missing)**
+
+```bash
+npm install -g @ionic/cli
+ionic -v
+```
+
+Use `@ionic/cli` (not the deprecated global `ionic` package).
+
+- [ ] **Step 2: Scaffold with the tabs template**
+
+Repo is non-empty, so scaffold into a sibling folder then merge (do **not** delete `docs/` or the HTML/scope files):
+
+```bash
+cd /Users/ruebencumberbatch/code
+ionic start budget-app-scaffold tabs --type vue --capacitor --no-interactive
+```
+
+If `--capacitor` is rejected by your CLI version, omit it and run Capacitor setup from Step 3.
+
+Copy into `budget-application/` (overwrite nothing under `docs/`):
+
+```bash
+# From budget-app-scaffold → budget-application
+cp -R budget-app-scaffold/src budget-application/
+cp budget-app-scaffold/package.json budget-application/
+cp budget-app-scaffold/package-lock.json budget-application/ 2>/dev/null || true
+cp budget-app-scaffold/ionic.config.json budget-application/
+cp budget-app-scaffold/capacitor.config.ts budget-application/ 2>/dev/null || cp budget-app-scaffold/capacitor.config.json budget-application/
+cp budget-app-scaffold/vite.config.ts budget-application/
+cp budget-app-scaffold/tsconfig*.json budget-application/
+cp budget-app-scaffold/index.html budget-application/
+cp budget-app-scaffold/.gitignore budget-application/ 2>/dev/null || true
+# copy any other root config the scaffold created (eslint, prettier, etc.)
+cd budget-application && npm install
+```
+
+Starter already includes a tab bar — Task 10 will rename tabs to Budget / Goals / History.
+
+- [ ] **Step 3: Ensure Capacitor is present**
 
 ```bash
 cd /Users/ruebencumberbatch/code/budget-application
-npm create @ionic/vue-app@latest . -- --capacitor --no-interactive
+npm install @capacitor/core @capacitor/cli @capacitor/app @capacitor/haptics @capacitor/keyboard @capacitor/status-bar
+npx cap init "Budget" "com.budget.app" --web-dir dist
 ```
 
-If the CLI refuses a non-empty directory, scaffold to `/tmp/budget-ionic` and copy `src/`, config files, and `package.json` into the repo without deleting `docs/` or the HTML/scope files.
+Skip `cap init` if `capacitor.config.ts` already exists from Step 2.  
+Do **not** require `ionic cap add ios/android` in Phase 1 day-one work — browser-first per spec; add native platforms when ready to device-test.
 
-- [ ] **Step 2: Add Vitest**
+- [ ] **Step 4: Add Vitest**
 
 ```bash
 npm install -D vitest @vue/test-utils jsdom
@@ -133,20 +177,26 @@ export default defineConfig({
 
 Add to `package.json` scripts: `"test": "vitest run"`, `"test:watch": "vitest"`.
 
-- [ ] **Step 3: Verify scaffold**
+- [ ] **Step 5: Verify scaffold**
 
 ```bash
 npm test
 npm run build
+ionic serve
 ```
 
-Expected: Vitest runs (0 tests OK or placeholder); build succeeds.
+Expected: Vitest runs; build succeeds; app opens in browser (default tabs starter UI).
 
-- [ ] **Step 4: Commit**
+- [ ] **Step 6: Commit**
 
 ```bash
 git add -A
-git commit -m "chore: scaffold Ionic Vue app with Capacitor and Vitest"
+git commit -m "chore: scaffold Ionic Vue tabs app with Capacitor and Vitest"
+```
+
+```bash
+# cleanup scaffold folder when done
+rm -rf /Users/ruebencumberbatch/code/budget-app-scaffold
 ```
 
 ---
