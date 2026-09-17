@@ -1,0 +1,287 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Monthly Budget Pot Calculator</title>
+<style>
+  :root {
+    --bg: #f4f5f7;
+    --card: #ffffff;
+    --ink: #1c1e21;
+    --muted: #6b7280;
+    --border: #e5e7eb;
+    --accent: #0f766e;
+    --accent-light: #ccfbf1;
+    --warn: #b45309;
+    --warn-bg: #fef3c7;
+    --bad: #b91c1c;
+    --bad-bg: #fee2e2;
+    --good: #15803d;
+    --good-bg: #dcfce7;
+  }
+  * { box-sizing: border-box; }
+  body {
+    margin: 0;
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+    background: var(--bg);
+    color: var(--ink);
+    padding: 24px 16px 60px;
+  }
+  .wrap { max-width: 720px; margin: 0 auto; }
+  h1 { font-size: 22px; margin: 0 0 4px; }
+  .sub { color: var(--muted); font-size: 14px; margin: 0 0 24px; }
+
+  .card {
+    background: var(--card);
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    padding: 20px;
+    margin-bottom: 20px;
+  }
+  .card h2 {
+    font-size: 15px;
+    margin: 0 0 14px;
+    text-transform: uppercase;
+    letter-spacing: 0.04em;
+    color: var(--muted);
+  }
+
+  .fixed-row {
+    display: flex;
+    justify-content: space-between;
+    padding: 8px 0;
+    border-bottom: 1px solid var(--border);
+    font-size: 14px;
+  }
+  .fixed-row:last-child { border-bottom: none; }
+  .fixed-row .amt { font-variant-numeric: tabular-nums; font-weight: 600; }
+  .fixed-total {
+    display: flex;
+    justify-content: space-between;
+    padding-top: 12px;
+    margin-top: 6px;
+    border-top: 2px solid var(--ink);
+    font-weight: 700;
+  }
+
+  .field {
+    display: grid;
+    grid-template-columns: 1fr 140px;
+    align-items: center;
+    gap: 12px;
+    margin-bottom: 14px;
+  }
+  .field label { font-size: 14px; }
+  .field .hint { display: block; font-size: 12px; color: var(--muted); margin-top: 2px; }
+  .field input {
+    padding: 8px 10px;
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    font-size: 15px;
+    text-align: right;
+    width: 100%;
+    font-variant-numeric: tabular-nums;
+  }
+  .field input:focus { outline: 2px solid var(--accent); border-color: var(--accent); }
+
+  .salary-field { grid-template-columns: 1fr 140px; }
+
+  .result-box {
+    border-radius: 10px;
+    padding: 16px;
+    text-align: center;
+  }
+  .result-box .label { font-size: 13px; color: var(--muted); margin-bottom: 4px; }
+  .result-box .value { font-size: 32px; font-weight: 800; font-variant-numeric: tabular-nums; }
+  .result-box .per-week { font-size: 13px; color: var(--muted); margin-top: 4px; }
+
+  .status-ok { background: var(--good-bg); }
+  .status-ok .value { color: var(--good); }
+  .status-warn { background: var(--warn-bg); }
+  .status-warn .value { color: var(--warn); }
+  .status-bad { background: var(--bad-bg); }
+  .status-bad .value { color: var(--bad); }
+
+  .breakdown-row {
+    display: flex;
+    justify-content: space-between;
+    font-size: 13px;
+    color: var(--muted);
+    padding: 4px 0;
+  }
+
+  .note {
+    font-size: 13px;
+    color: var(--muted);
+    margin-top: 10px;
+    line-height: 1.5;
+  }
+
+  .reset-btn {
+    display: block;
+    margin: 0 auto;
+    background: none;
+    border: 1px solid var(--border);
+    color: var(--muted);
+    padding: 8px 16px;
+    border-radius: 8px;
+    font-size: 13px;
+    cursor: pointer;
+  }
+  .reset-btn:hover { background: var(--bg); }
+
+  .pot-grid {
+    display: grid;
+    gap: 6px;
+  }
+</style>
+</head>
+<body>
+<div class="wrap">
+  <h1>Monthly Budget Pot Calculator</h1>
+  <p class="sub">Fixed pots are locked in. Adjust food, petrol and tobacco each month to see what's really left in Discretionary.</p>
+
+  <div class="card">
+    <h2>Take-home pay</h2>
+    <div class="field salary-field">
+      <label for="salary">Monthly salary (after tax)</label>
+      <input type="number" id="salary" value="3429" step="1" />
+    </div>
+  </div>
+
+  <div class="card">
+    <h2>Fixed pots (1&ndash;4)</h2>
+    <div id="fixedList"></div>
+    <div class="fixed-total">
+      <span>Total fixed</span>
+      <span class="amt" id="fixedTotal">&pound;0.00</span>
+    </div>
+  </div>
+
+  <div class="card">
+    <h2>Pot 5 &mdash; Food &amp; Petrol</h2>
+    <div class="field">
+      <label for="food">Food shop this month<span class="hint">Typical range: &pound;600&ndash;&pound;800</span></label>
+      <input type="number" id="food" value="700" step="1" />
+    </div>
+    <div class="field">
+      <label for="petrol">Petrol this month<span class="hint">Typical range: &pound;150&ndash;&pound;200</span></label>
+      <input type="number" id="petrol" value="175" step="1" />
+    </div>
+  </div>
+
+  <div class="card">
+    <h2>Pot 6 &mdash; Discretionary</h2>
+    <div class="field">
+      <label for="tobacco">Tobacco this month<span class="hint">Typical range: &pound;50&ndash;&pound;90</span></label>
+      <input type="number" id="tobacco" value="90" step="1" />
+    </div>
+  </div>
+
+  <div class="card" id="resultCard">
+    <h2>Result</h2>
+    <div class="result-box" id="resultBox">
+      <div class="label">Left in Discretionary after tobacco</div>
+      <div class="value" id="discValue">&pound;0.00</div>
+      <div class="per-week" id="discPerWeek"></div>
+    </div>
+    <div class="pot-grid" style="margin-top:14px;">
+      <div class="breakdown-row"><span>Salary</span><span id="bSalary"></span></div>
+      <div class="breakdown-row"><span>&minus; Fixed pots (1&ndash;4)</span><span id="bFixed"></span></div>
+      <div class="breakdown-row"><span>&minus; Food + Petrol (pot 5)</span><span id="bFoodPetrol"></span></div>
+      <div class="breakdown-row"><span>&minus; Tobacco</span><span id="bTobacco"></span></div>
+    </div>
+    <p class="note" id="noteText"></p>
+  </div>
+
+  <button class="reset-btn" id="resetBtn">Reset to defaults</button>
+</div>
+
+<script>
+  const fixedPots = [
+    { name: "Essentials (council tax, energy, insurance, car tax, child support, NHS)", amount: 809.93 },
+    { name: "Debt (Lendable, Capital One, Monzo Flex, ACI UK, United Kash Ltd)", amount: 627.17 },
+    { name: "Subscriptions (gym, Monzo Max, streaming, etc.)", amount: 192.87 },
+    { name: "Savings", amount: 300.00 }
+  ];
+
+  const fixedListEl = document.getElementById('fixedList');
+  fixedPots.forEach(p => {
+    const row = document.createElement('div');
+    row.className = 'fixed-row';
+    row.innerHTML = `<span>${p.name}</span><span class="amt">£${p.amount.toFixed(2)}</span>`;
+    fixedListEl.appendChild(row);
+  });
+
+  const fixedTotal = fixedPots.reduce((sum, p) => sum + p.amount, 0);
+  document.getElementById('fixedTotal').textContent = `£${fixedTotal.toFixed(2)}`;
+
+  const salaryInput = document.getElementById('salary');
+  const foodInput = document.getElementById('food');
+  const petrolInput = document.getElementById('petrol');
+  const tobaccoInput = document.getElementById('tobacco');
+
+  const discValue = document.getElementById('discValue');
+  const discPerWeek = document.getElementById('discPerWeek');
+  const resultBox = document.getElementById('resultBox');
+  const bSalary = document.getElementById('bSalary');
+  const bFixed = document.getElementById('bFixed');
+  const bFoodPetrol = document.getElementById('bFoodPetrol');
+  const bTobacco = document.getElementById('bTobacco');
+  const noteText = document.getElementById('noteText');
+
+  function fmt(n) {
+    const sign = n < 0 ? '-' : '';
+    return `${sign}£${Math.abs(n).toFixed(2)}`;
+  }
+
+  function recalc() {
+    const salary = parseFloat(salaryInput.value) || 0;
+    const food = parseFloat(foodInput.value) || 0;
+    const petrol = parseFloat(petrolInput.value) || 0;
+    const tobacco = parseFloat(tobaccoInput.value) || 0;
+
+    const foodPetrol = food + petrol;
+    const remainingAfterFixed = salary - fixedTotal;
+    const discretionary = remainingAfterFixed - foodPetrol - tobacco;
+
+    bSalary.textContent = fmt(salary);
+    bFixed.textContent = `- ${fmt(fixedTotal)}`;
+    bFoodPetrol.textContent = `- ${fmt(foodPetrol)}`;
+    bTobacco.textContent = `- ${fmt(tobacco)}`;
+
+    discValue.textContent = fmt(discretionary);
+    discPerWeek.textContent = discretionary >= 0
+      ? `≈ £${(discretionary / 4.33).toFixed(2)} per week`
+      : '';
+
+    resultBox.classList.remove('status-ok', 'status-warn', 'status-bad');
+    if (discretionary < 0) {
+      resultBox.classList.add('status-bad');
+      noteText.textContent = `You're £${Math.abs(discretionary).toFixed(2)} short this month. Essentials, debt, subscriptions and savings are protected — this shortfall means food, petrol or tobacco spend needs trimming, or the savings pot needs a temporary pause rather than being raided last-minute.`;
+    } else if (discretionary < 150) {
+      resultBox.classList.add('status-warn');
+      noteText.textContent = `Tight month — only £${discretionary.toFixed(2)} of genuine free spending once everything else is covered. Worth keeping an eye on any extra costs before payday.`;
+    } else {
+      resultBox.classList.add('status-ok');
+      noteText.textContent = `This is what's genuinely free to spend after essentials, debt, subscriptions, £300 savings, food, petrol and tobacco are all accounted for.`;
+    }
+  }
+
+  [salaryInput, foodInput, petrolInput, tobaccoInput].forEach(el => {
+    el.addEventListener('input', recalc);
+  });
+
+  document.getElementById('resetBtn').addEventListener('click', () => {
+    salaryInput.value = 3429;
+    foodInput.value = 700;
+    petrolInput.value = 175;
+    tobaccoInput.value = 90;
+    recalc();
+  });
+
+  recalc();
+</script>
+</body>
+</html>
