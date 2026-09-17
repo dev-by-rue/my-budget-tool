@@ -160,24 +160,28 @@ cd /Users/ruebencumberbatch/code/budget-application
 npm install -D vitest @vue/test-utils jsdom
 ```
 
-Create `vitest.config.ts`:
+Create `src/vite/silenceMissingSourcemapWarnings.ts` and wire it into `vitest.config.ts` / `vite.config.ts` (use `import.meta.dirname`, not `__dirname`; Vitest overwrites `customLogger`, so silence Ionic missing-sourcemap noise via a `configResolved` logger patch):
 
 ```ts
-import { defineConfig } from 'vitest/config';
-import vue from '@vitejs/plugin-vue';
-import path from 'node:path';
+// vitest.config.ts
+import path from 'node:path'
+import { defineConfig } from 'vitest/config'
+import vue from '@vitejs/plugin-vue'
+import { silenceMissingSourcemapWarnings } from './src/vite/silenceMissingSourcemapWarnings.ts'
 
 export default defineConfig({
-  plugins: [vue()],
+  plugins: [vue(), silenceMissingSourcemapWarnings()],
   resolve: {
-    alias: { '@': path.resolve(__dirname, 'src') },
+    alias: { '@': path.resolve(import.meta.dirname, './src') },
   },
   test: {
     environment: 'jsdom',
     include: ['src/**/*.test.ts'],
   },
-});
+})
 ```
+
+(See `src/vite/silenceMissingSourcemapWarnings.ts` in the repo for the plugin implementation.)
 
 Add to `package.json` scripts: `"test": "vitest run"`, `"test:watch": "vitest"`.
 
