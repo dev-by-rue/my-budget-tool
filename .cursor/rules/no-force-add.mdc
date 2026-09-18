@@ -1,0 +1,18 @@
+---
+description: Never force-add gitignored files; never commit unless asked;
+alwaysApply: true
+---
+
+# Git safety — no force-adds, no unsolicited commits
+
+## Never force-add
+
+- **Never** run `git add -f`, `git add --force`, or any equivalent that stages ignored files.
+- **Never** suggest or document force-adding ignored paths (including in plans, specs, or SDD briefs).
+- If a needed file is ignored, stop and ask the engineer — do not bypass `.gitignore`.
+
+## Commits only when asked
+
+- **Never** create a git commit unless the engineer explicitly asks in the current request.
+- Plan/skill steps that say “Commit” are **not** authorization — skip them and leave changes uncommitted (or note them as deferred).
+- Do not amend, rebase onto remote, or force-push unless the engineer explicitly asks.

@@ -1,0 +1,7 @@
+{
+  "name": "budget-app-scaffold",
+  "integrations": {
+    "capacitor": {}
+  },
+  "type": "vue-vite"
+}
