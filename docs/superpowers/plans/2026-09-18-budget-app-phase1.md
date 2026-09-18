@@ -86,18 +86,21 @@ budget-application/
 ### Task 1: Scaffold Ionic Vue + Capacitor + Vitest
 
 **Files:**
+
 - Create: Ionic Vue **tabs** app files **inside this working repo** (`/Users/ruebencumberbatch/code/budget-application`)
 - Create: `vitest.config.ts`
 - Modify: `package.json` (test scripts)
 - Keep: `docs/`, `project_scope.md`, `budget-pot-calculator.html`, existing `.git/`
 
 **Interfaces:**
+
 - Consumes: none
 - Produces: runnable `ionic serve` / `npm run dev`, `npm test`, Capacitor config in this repo
 
 **Official docs (source of truth):**
-- Quickstart: https://ionicframework.com/docs/vue/quickstart — `npm install -g @ionic/cli` then `ionic start … --type=vue`
-- First app (tabs): https://ionicframework.com/docs/vue/your-first-app — `ionic start … tabs --type=vue`
+
+- Quickstart: [https://ionicframework.com/docs/vue/quickstart](https://ionicframework.com/docs/vue/quickstart) — `npm install -g @ionic/cli` then `ionic start … --type=vue`
+- First app (tabs): [https://ionicframework.com/docs/vue/your-first-app](https://ionicframework.com/docs/vue/your-first-app) — `ionic start … tabs --type=vue`
 - Capacitor flag: `--capacitor` on `ionic start` (see CLI help). Native `ios`/`android` platforms stay optional until device testing.
 
 **Why a temp folder?** `ionic start` always creates a **new directory**; it cannot initialise into this already-populated git repo. Scaffold next door, then copy **into** `budget-application` (this working repo).
@@ -210,12 +213,14 @@ git commit -m "chore: scaffold Ionic Vue tabs app with Capacitor and Vitest"
 ### Task 2: Domain types and starter pots
 
 **Files:**
+
 - Create: `src/domain/types.ts`
 - Create: `src/domain/starters.ts`
 - Create: `src/domain/ids.ts`
 - Test: `src/domain/starters.test.ts`
 
 **Interfaces:**
+
 - Consumes: none
 - Produces: `Pot`, `Outgoing`, `Goal`, `MonthSnapshot`, `Settings`, `MonthComputed`, `LongShortRatio`, `PotKind`; `createStarterPots()`; `newId()`
 
@@ -364,11 +369,13 @@ git commit -m "feat: add domain types and starter pots"
 ### Task 3: Calc — monthsUntil and requiredMonthly
 
 **Files:**
+
 - Create: `src/domain/calc/monthsUntil.ts`
 - Create: `src/domain/calc/requiredMonthly.ts`
 - Test: `src/domain/calc/requiredMonthly.test.ts`
 
 **Interfaces:**
+
 - Consumes: `Goal` from `types.ts`
 - Produces: `monthsUntil(budgetMonth, deadline) => number`; `requiredMonthly(goal, budgetMonth) => { amount: number; deadlinePassed: boolean }`
 
@@ -485,12 +492,14 @@ git commit -m "feat: add requiredMonthly and monthsUntil calc"
 ### Task 4: Calc — allocateSavings and computeMonth
 
 **Files:**
+
 - Create: `src/domain/calc/allocateSavings.ts`
 - Create: `src/domain/calc/computeMonth.ts`
 - Create: `src/domain/monthFactory.ts`
 - Test: `src/domain/calc/computeMonth.test.ts`
 
 **Interfaces:**
+
 - Consumes: `requiredMonthly`, domain types, `createStarterPots`, `newId`
 - Produces: `allocateSavings(...)`; `computeMonth(input) => MonthComputed`; `createEmptyMonth(id)`; `cloneMonth(prev, newId)`
 
@@ -769,11 +778,13 @@ git commit -m "feat: add allocateSavings, computeMonth, and month factory"
 ### Task 5: BudgetRepository interface + memory adapter
 
 **Files:**
+
 - Create: `src/data/BudgetRepository.ts`
 - Create: `src/data/adapters/memoryAdapter.ts`
 - Test: `src/data/adapters/memoryAdapter.test.ts`
 
 **Interfaces:**
+
 - Consumes: `MonthSnapshot`, `Settings`
 - Produces: `BudgetRepository` interface; `createMemoryAdapter(): BudgetRepository`
 
@@ -849,11 +860,13 @@ git commit -m "feat: add BudgetRepository interface and memory adapter"
 ### Task 6: Browser adapter (IndexedDB via idb)
 
 **Files:**
+
 - Create: `src/data/adapters/browserAdapter.ts`
 - Test: `src/data/adapters/browserAdapter.test.ts`
 - Modify: `package.json` (dependency `idb`)
 
 **Interfaces:**
+
 - Consumes: `BudgetRepository`
 - Produces: `createBrowserAdapter(): BudgetRepository`
 
@@ -928,6 +941,7 @@ git commit -m "feat: add IndexedDB browser persistence adapter"
 ### Task 7: Local Postgres API + postgres adapter
 
 **Files:**
+
 - Create: `server/package.json`
 - Create: `server/src/schema.sql`
 - Create: `server/src/db.ts`
@@ -936,6 +950,7 @@ git commit -m "feat: add IndexedDB browser persistence adapter"
 - Test: `src/data/adapters/postgresAdapter.test.ts` (skipped if `DATABASE_URL` unset)
 
 **Interfaces:**
+
 - Consumes: `BudgetRepository`
 - Produces: HTTP API on `http://127.0.0.1:8787`; `createPostgresAdapter({ baseUrl })`
 
@@ -1005,10 +1020,12 @@ git commit -m "feat: add local Postgres API and client adapter"
 ### Task 8: createRepository — probe and fallback
 
 **Files:**
+
 - Create: `src/data/createRepository.ts`
 - Test: `src/data/createRepository.test.ts`
 
 **Interfaces:**
+
 - Consumes: browser + postgres + memory adapters
 - Produces: `createRepository(options?) => Promise<{ repo: BudgetRepository; adapter: StorageAdapterName }>`
 
@@ -1094,6 +1111,7 @@ git commit -m "feat: add repository probe and fallback selection"
 ### Task 9: Pinia budget store
 
 **Files:**
+
 - Create: `src/stores/budgetStore.ts`
 - Create: `src/utils/debounce.ts`
 - Create: `src/utils/money.ts`
@@ -1101,6 +1119,7 @@ git commit -m "feat: add repository probe and fallback selection"
 - Modify: `src/main.ts` (register Pinia)
 
 **Interfaces:**
+
 - Consumes: `BudgetRepository`, `computeMonth`, `cloneMonth`, `createEmptyMonth`
 - Produces: store with `current`, `previous`, `settings`, `init()`, `setSalary`, `addOutgoing`, `updateOutgoing`, `removeOutgoing`, `addPot`, `renamePot`, `removePot`, `updateGoal`, `setRatio`, `ensureMonth(id)`, `saveError`, `readOnly`
 
@@ -1151,7 +1170,6 @@ Key behaviours:
 - Savings pots: no `addOutgoing` allowed for non-standard pots (guard)
 
 - [ ] **Step 4: Run tests — expect PASS**
-
 - [ ] **Step 5: Commit**
 
 ```bash
@@ -1164,6 +1182,7 @@ git commit -m "feat: add Pinia budget store with live recompute and save"
 ### Task 10: App shell — tabs and routing
 
 **Files:**
+
 - Modify: `src/App.vue`
 - Modify: `src/router/index.ts`
 - Create: `src/views/BudgetPage.vue` (stub)
@@ -1172,6 +1191,7 @@ git commit -m "feat: add Pinia budget store with live recompute and save"
 - Create: `src/components/PersistenceBanner.vue`
 
 **Interfaces:**
+
 - Consumes: `useBudgetStore().init` on app mount
 - Produces: IonTabs with Budget, Goals, History routes
 
@@ -1212,6 +1232,7 @@ git commit -m "feat: add tab shell for Budget, Goals, and History"
 ### Task 11: Budget page UI
 
 **Files:**
+
 - Modify: `src/views/BudgetPage.vue`
 - Create: `src/components/MoneyInput.vue`
 - Create: `src/components/OutgoingEditor.vue`
@@ -1219,6 +1240,7 @@ git commit -m "feat: add tab shell for Budget, Goals, and History"
 - Create: `src/components/UnderfundedBadge.vue`
 
 **Interfaces:**
+
 - Consumes: budget store actions/getters
 - Produces: working Budget tab matching spec behaviour (not HTML styling)
 
@@ -1256,9 +1278,11 @@ git commit -m "feat: implement Budget tab with outgoings and live Discretionary"
 ### Task 12: Goals page UI
 
 **Files:**
+
 - Modify: `src/views/GoalsPage.vue`
 
 **Interfaces:**
+
 - Consumes: `updateGoal`, `setRatio`, `current.computed`
 
 - [ ] **Step 1: Implement GoalsPage**
@@ -1286,11 +1310,13 @@ git commit -m "feat: implement Goals tab with ratio and required monthly"
 ### Task 13: History page UI
 
 **Files:**
+
 - Modify: `src/views/HistoryPage.vue`
 - Create: `src/domain/historyCompare.ts`
 - Test: `src/domain/historyCompare.test.ts`
 
 **Interfaces:**
+
 - Consumes: stored `MonthSnapshot.computed` only
 - Produces: `compareMonths(current, previous) => { rows, discretionaryDelta }`
 
@@ -1305,7 +1331,6 @@ Assert comparison uses `computed.potTotals` and `computed.discretionary` from sn
 - Table/list: pot name → this / last / delta; Discretionary row
 
 - [ ] **Step 3: Run unit test — PASS; manual smoke with two months**
-
 - [ ] **Step 4: Commit**
 
 ```bash
@@ -1318,6 +1343,7 @@ git commit -m "feat: implement History this-vs-last comparison"
 ### Task 14: Persistence UX polish + README
 
 **Files:**
+
 - Modify: `src/components/PersistenceBanner.vue`
 - Modify: `src/stores/budgetStore.ts` (retry / read-only paths if gaps)
 - Create: `README.md`
@@ -1358,26 +1384,29 @@ git commit -m "docs: add README and persistence UX polish"
 
 ## Spec coverage checklist
 
-| Spec requirement | Task |
-|------------------|------|
-| Ionic + Vue + Capacitor | 1 |
-| Terminology pot/outgoing | 2, 11 |
-| Starter pots | 2 |
-| requiredMonthly + deadline passed | 3 |
-| Ratio underfunded allocation + Discretionary | 4 |
-| Dual persistence + probe fallback | 6–8 |
-| Local Postgres API | 7 |
-| Live recompute + debounced save | 9 |
-| New month carry-forward | 9 |
-| Tabs Budget/Goals/History | 10–13 |
-| System savings pots no outgoings | 9, 11 |
-| History uses stored computed | 13 |
-| Error handling / read-only | 9, 14 |
-| No partner/auth/transactions | Global — not implemented |
+
+| Spec requirement                             | Task                     |
+| -------------------------------------------- | ------------------------ |
+| Ionic + Vue + Capacitor                      | 1                        |
+| Terminology pot/outgoing                     | 2, 11                    |
+| Starter pots                                 | 2                        |
+| requiredMonthly + deadline passed            | 3                        |
+| Ratio underfunded allocation + Discretionary | 4                        |
+| Dual persistence + probe fallback            | 6–8                      |
+| Local Postgres API                           | 7                        |
+| Live recompute + debounced save              | 9                        |
+| New month carry-forward                      | 9                        |
+| Tabs Budget/Goals/History                    | 10–13                    |
+| System savings pots no outgoings             | 9, 11                    |
+| History uses stored computed                 | 13                       |
+| Error handling / read-only                   | 9, 14                    |
+| No partner/auth/transactions                 | Global — not implemented |
+
 
 ## Self-review notes
 
 - Locked inclusive months-until rule in Global Constraints and Task 3
 - No TBD placeholders in task steps
 - Types aligned: `MonthSnapshot`, `BudgetRepository`, `LongShortRatio` reused throughout
-- `memory` adapter used for tests and last-resort boot; production force flag uses `browser` \| `postgres`
+- `memory` adapter used for tests and last-resort boot; production force flag uses `browser`  `postgres`
+
