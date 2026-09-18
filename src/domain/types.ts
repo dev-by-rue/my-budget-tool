@@ -36,10 +36,10 @@ export interface ComputedMonth {
   requiredShortTerm: number;
   requiredLongTerm: number;
   discretionaryFund: number;
-  underfundedLongTerm: number;
-  underfundedShortTerm: number;
-  deadlinePassedLongTerm: number;
-  deadlinePassedShortTerm: number;
+  underfundedLongTerm: boolean;
+  underfundedShortTerm: boolean;
+  deadlinePassedLongTerm: boolean;
+  deadlinePassedShortTerm: boolean;
 }
 
 export interface MonthlySnapshot {
