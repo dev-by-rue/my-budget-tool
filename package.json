@@ -20,6 +20,7 @@
     "@capacitor/status-bar": "8.0.3",
     "@ionic/vue": "^9.0.0",
     "@ionic/vue-router": "^9.0.0",
+    "idb": "^8.0.3",
     "ionicons": "^8.1.0",
     "vue": "^3.5.0",
     "vue-router": "^5.0.0"
@@ -33,6 +34,7 @@
     "cypress": "^13.5.0",
     "eslint": "^8.35.0",
     "eslint-plugin-vue": "^9.9.0",
+    "fake-indexeddb": "^6.2.5",
     "jsdom": "^22.1.0",
     "terser": "^5.16.0",
     "typescript": "~5.9.0",
