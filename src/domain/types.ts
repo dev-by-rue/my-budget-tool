@@ -26,7 +26,7 @@ export interface Goal {
   name: string;
   target: number;
   current: number;
-  deaadline: string;
+  deadline: string;
 }
 
 export interface ComputedMonth {
