@@ -1,5 +1,10 @@
 import type { Pot } from "./types";
 
+/**
+ * @description Builds the six starter pots for a new month (four standard, two system savings).
+ *
+ * @returns Essentials, Debts, Subscriptions, Long Term Savings Goals, Short Term Savings Goals, and Travel
+ */
 export const createStartingPots = (): Pot[] => {
   const pots: Array<Omit<Pot, "id">> = [
     { name: "Essentials", sortOrder: 0, system: false, category: "standard" },
